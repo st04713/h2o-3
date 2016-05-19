@@ -49,6 +49,7 @@ function() {
     params$autoencoder     <- FALSE
     params$x               <- c("sepal_len","sepal_wid","petal_len","petal_wid")
     params$y               <- "species"
+    params$model_id        <- "DLModel"
 
     # large network
     training_frame <- h2o.importFile(training_file)
