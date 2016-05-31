@@ -284,11 +284,12 @@ each_model._model_json["output"]["model_summary"].cell_values[0][summary_list.co
 manual_model._model_json["output"]["model_summary"].cell_values[0][summary_list.col_header.index('total_sum_of_squares')]
 
                     # just compare the training metrics in this case within tolerance:
-                    if (each_model_runtime > 0) and \
-                            (abs(grid_model_metrics - manual_model_metrics)/grid_model_metrics > self.allowed_diff):
-                        print("test_kmeans_grid_search_over_params for kmeans warning: grid search model mdetric "
-                              "({0}) and manually built H2O model metric ({1}) differ too much"
-                              "!".format(grid_model_metrics, manual_model_metrics))
+                    if not((type(grid_model_metrics) == str) or (type(manual_model_metrics) == str)):
+                        if (each_model_runtime > 0) and \
+                                (abs(grid_model_metrics - manual_model_metrics)/grid_model_metrics > self.allowed_diff):
+                            print("test_kmeans_grid_search_over_params for kmeans warning: grid search model metric "
+                                  "({0}) and manually built H2O model metric ({1}) differ too much"
+                                  "!".format(grid_model_metrics, manual_model_metrics))
 
                 total_run_time_limits = max(total_run_time_limits, true_run_time_limits) * (1+self.extra_time_fraction)
 

@@ -296,10 +296,11 @@ class Test_glrm_grid_search:
                     manual_model_metrics = manual_model._model_json['output']['objective']
 
                     # just compare the mse in this case within tolerance:
-                    if abs(grid_model_metrics - manual_model_metrics)/grid_model_metrics > self.allowed_diff:
-                        print("test_glrm_grid_search_over_params for GLRM warning: grid search model mdetric ({0}) and "
-                              "manually built H2O model metric ({1}) differ too much"
-                              "!".format(grid_model_metrics, manual_model_metrics))
+                    if not((type(grid_model_metrics) == str) or (type(manual_model_metrics) == str)):
+                        if abs(grid_model_metrics - manual_model_metrics)/grid_model_metrics > self.allowed_diff:
+                            print("test_glrm_grid_search_over_params for GLRM warning: grid search model mdetric ({0}) "
+                                  "and manually built H2O model metric ({1}) differ too much"
+                                  "!".format(grid_model_metrics, manual_model_metrics))
 
                 total_run_time_limits = max(total_run_time_limits, true_run_time_limits) * (1+self.extra_time_fraction)
 

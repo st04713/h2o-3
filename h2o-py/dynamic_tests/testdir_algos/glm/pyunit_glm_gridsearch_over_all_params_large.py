@@ -6,7 +6,6 @@ import os
 import numpy as np
 from builtins import range
 import time
-import json
 
 sys.path.insert(1, "../../../")
 
@@ -397,11 +396,12 @@ class Test_glm_grid_search:
                     manual_model_metrics = manual_model.model_performance(test_data=self.training2_data)
 
                 # just compare the mse in this case within tolerance:
-                if abs(grid_model_metrics.mse() - manual_model_metrics.mse())/grid_model_metrics.mse()\
-                        > self.allowed_diff:
-                    print("test1_glm_grid_search_over_params for GLM warning: grid search model metric ({0}) and "
-                          "manually built H2O model metric ({1}) differ too much"
-                          "!".format(grid_model_metrics.mse(), manual_model_metrics.mse()))
+                    if not((type(grid_model_metrics.mse()) == str) or (type(manual_model_metrics.mse()) == str)):
+                        if abs(grid_model_metrics.mse() - manual_model_metrics.mse())/grid_model_metrics.mse()\
+                                > self.allowed_diff:
+                            print("test1_glm_grid_search_over_params for GLM warning: grid search model metric ({0}) "
+                                  "and manually built H2O model metric ({1}) differ too much"
+                                  "!".format(grid_model_metrics.mse(), manual_model_metrics.mse()))
 
                 total_run_time_limits = max(total_run_time_limits, true_run_time_limits) * (1+self.extra_time_fraction)
 

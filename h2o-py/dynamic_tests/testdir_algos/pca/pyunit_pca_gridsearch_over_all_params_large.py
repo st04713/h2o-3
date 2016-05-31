@@ -5,7 +5,6 @@ import random
 import os
 from builtins import range
 import time
-import json
 
 sys.path.insert(1, "../../../")
 
@@ -275,11 +274,12 @@ class Test_PCA_grid_search:
                         sum(manual_model._model_json["output"]["model_summary"].cell_values[0][1:params_list["k"]])
 
                     # just compare the mse in this case within tolerance:
-                    if (each_model_runtime > 0) and \
-                            (abs(grid_model_metrics - manual_model_metrics)/grid_model_metrics > self.allowed_diff):
-                        print("test_PCA_grid_search_over_params for PCA warning: grid search model mdetric ({0}) and "
-                              "manually built H2O model metric ({1}) differ too much"
-                              "!".format(grid_model_metrics, manual_model_metrics))
+                    if not((type(grid_model_metrics) == str) or (type(manual_model_metrics) == str)):
+                        if (each_model_runtime > 0) and \
+                                (abs(grid_model_metrics - manual_model_metrics)/grid_model_metrics > self.allowed_diff):
+                            print("test_PCA_grid_search_over_params for PCA warning: grid search model mdetric ({0}) "
+                                  "and manually built H2O model metric ({1}) differ too much"
+                                  "!".format(grid_model_metrics, manual_model_metrics))
 
                 total_run_time_limits = max(total_run_time_limits, true_run_time_limits) * (1+self.extra_time_fraction)
 

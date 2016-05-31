@@ -338,12 +338,13 @@ class Test_naivebayes_grid_search:
                         manual_model.model_performance(test_data=self.training1_data)._metric_json[self.training_metric]
 
                     # just compare the mse in this case within tolerance:
-                    if abs(grid_model_metrics - manual_model_metrics) > self.allowed_diff:
-                        print("test_naivebayes_grid_search_over_params for naivebayes WARNING\ngrid search model {0}: "
-                              "{1}, time taken to build (secs): {2}\n and manually built H2O model {3}: {4}, "
-                              "time taken to build (secs): {5}\ndiffer too much!"
-                              "".format(self.training_metric, grid_model_metrics, each_model_runtime,
-                                        self.training_metric, manual_model_metrics, model_runtime))
+                    if not((type(grid_model_metrics) == str) or (type(manual_model_metrics) == str)):
+                        if abs(grid_model_metrics - manual_model_metrics) > self.allowed_diff:
+                            print("test_naivebayes_grid_search_over_params for naivebayes WARNING\ngrid search model "
+                                  "{0}: {1}, time taken to build (secs): {2}\n and manually built H2O model {3}: {4}, "
+                                  "time taken to build (secs): {5}\ndiffer too much!"
+                                  "".format(self.training_metric, grid_model_metrics, each_model_runtime,
+                                            self.training_metric, manual_model_metrics, model_runtime))
 
                 print("Time taken for gridsearch to build all models (sec): {0}\n Time taken to manually build all "
                       "models (sec): {1}, total run time limits (sec): "

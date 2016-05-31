@@ -5,7 +5,6 @@ import random
 import os
 from builtins import range
 import time
-import json
 
 sys.path.insert(1, "../../../")
 
@@ -69,7 +68,7 @@ class Test_rf_grid_search:
     max_real_number = 3         # maximum number of real grid values to generate
 
     time_scale = 2              # maximum runtime scale
-    extra_time_fraction = 0.1   # since timing is never perfect, give some extra time on top of maximum runtime limit
+    extra_time_fraction = 0.25   # since timing is never perfect, give some extra time on top of maximum runtime limit
     min_runtime_per_tree = 0    # minimum run time found.  Determined later
     model_run_time = 0.0        # time taken to run a vanilla random forest model.  Determined later.
     allowed_runtime_diff = 0.05     # run time difference between random forest manually built and gridsearch models
@@ -301,12 +300,12 @@ class Test_rf_grid_search:
                     manual_model_metrics = manual_model.model_performance()._metric_json[self.training_metric]
 
                     # just compare the mse in this case within tolerance:
-                    if (each_model_runtime > 0) and \
-                            (abs(grid_model_metrics - manual_model_metrics)/grid_model_metrics > self.allowed_diff):
-                        print("test_rf_gridsearch_sorting_metrics for random forest warning: grid search model metric "
-                              "({0}) and manually built H2O model metric ({1}) differ too "
-                              "much.".format(grid_model_metrics, manual_model_metrics))
-                        break
+                    if not((type(grid_model_metrics) == str) or (type(manual_model_metrics) == str)):
+                        if (each_model_runtime > 0) and \
+                                (abs(grid_model_metrics - manual_model_metrics)/grid_model_metrics > self.allowed_diff):
+                            print("test_rf_gridsearch_sorting_metrics for random forest warning: grid search model "
+                                  "metric ({0}) and manually built H2O model metric ({1}) differ too "
+                                  "much.".format(grid_model_metrics, manual_model_metrics))
 
                 total_run_time_limits = max(total_run_time_limits, true_run_time_limits) * (1+self.extra_time_fraction)
 

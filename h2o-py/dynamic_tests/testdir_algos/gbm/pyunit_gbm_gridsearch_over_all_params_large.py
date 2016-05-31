@@ -111,7 +111,7 @@ class Test_gbm_grid_search:
 
     params_zero_one = ['col_sample_rate', 'learn_rate_annealing', 'learn_rate', 'col_sample_rate_per_tree',
                        'sample_rate']
-    params_more_than_zero = ['min_rows', 'max_depth',  "max_after_balance_size"]
+    params_more_than_zero = ['min_rows', 'max_depth',  "max_after_balance_size", "max_abs_leafnode_pred"]
     params_more_than_one = ['nbins_cats', 'nbins']
     params_zero_positive = ['max_runtime_secs', 'stopping_rounds', 'ntrees', 'stopping_tolerance',
                             'min_split_improvement']       # >= 0
@@ -357,12 +357,13 @@ class Test_gbm_grid_search:
                     manual_model_metrics = manual_model.model_performance()._metric_json[self.training_metric]
 
                     # just compare the mse in this case within tolerance:
-                    if (each_model_runtime > 0) and \
-                            (abs(grid_model_metrics - manual_model_metrics)/grid_model_metrics > self.allowed_diff):
+                    if not((type(grid_model_metrics) == str) or (type(manual_model_metrics) == str)):
+                        if (each_model_runtime > 0) and \
+                                (abs(grid_model_metrics - manual_model_metrics)/grid_model_metrics > self.allowed_diff):
 
-                        print("test_gbm_grid_search_over_params for GBM warning: grid search model mdetric ({0}) and "
-                              "manually built H2O model metric ({1}) differ too much"
-                              "!".format(grid_model_metrics, manual_model_metrics))
+                            print("test_gbm_grid_search_over_params for GBM warning: grid search model mdetric ({0}) "
+                                  "and manually built H2O model metric ({1}) differ too much"
+                                  "!".format(grid_model_metrics, manual_model_metrics))
 
                 total_run_time_limits = max(total_run_time_limits, true_run_time_limits) * (1+self.extra_time_fraction)
 
