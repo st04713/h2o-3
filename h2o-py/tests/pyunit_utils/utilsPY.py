@@ -1964,7 +1964,11 @@ def get_gridables(params_in_json):
         if each_param['gridable']:
             gridable_parameters.append(str(each_param["name"]))
             gridable_types.append(each_param["type"])
-            gridable_defaults.append(each_param["default_value"])
+
+            if type(each_param["default_value"]) == unicode:    # hyper-parameters cannot be unicode
+                gridable_defaults.append(str(each_param["default_value"]))
+            else:
+                gridable_defaults.append(each_param["default_value"])
 
     return gridable_parameters, gridable_types, gridable_defaults
 
