@@ -1188,6 +1188,7 @@ public class GLM extends ModelBuilder<GLMModel,GLMParameters,GLMOutput> {
     }
     int iter1 = 0;
     int P = gt._xy.length - 1;
+    final BetaConstraint bc = _state.activeBC();
     DataInfo activeData = _state.activeData();
     // CD loop
     while (iter1++ < 1000 /*Math.max(P,500)*/) {
@@ -1195,7 +1196,7 @@ public class GLM extends ModelBuilder<GLMModel,GLMParameters,GLMOutput> {
       double bdiffNeg = 0;
       for (int i = 0; i < activeData._cats; ++i) {
         for(int j = activeData._catOffsets[i]; j < activeData._catOffsets[i+1]; ++j) { // can do in parallel
-          double b = ADMM.shrinkage(grads[j], l1pen) * diagInv[j];
+          double b = bc.applyBounds(ADMM.shrinkage(grads[j], l1pen) * diagInv[j],j);
           double bd = beta[j] - b;
           bdiffPos = bd > bdiffPos?bd:bdiffPos;
           bdiffNeg = bd < bdiffNeg?bd:bdiffNeg;
@@ -1208,7 +1209,7 @@ public class GLM extends ModelBuilder<GLMModel,GLMParameters,GLMOutput> {
       }
       int numStart = activeData.numStart();
       for (int i = numStart; i < P; ++i) {
-        double b = ADMM.shrinkage(grads[i], l1pen) * diagInv[i];
+        double b = bc.applyBounds(ADMM.shrinkage(grads[i], l1pen) * diagInv[i],i);
         double bd = beta[i] - b;
         bdiffPos = bd > bdiffPos?bd:bdiffPos;
         bdiffNeg = bd < bdiffNeg?bd:bdiffNeg;
@@ -1216,12 +1217,14 @@ public class GLM extends ModelBuilder<GLMModel,GLMParameters,GLMOutput> {
         beta[i] = b;
       }
       // intercept
-      double b = grads[P] * wsumInv;
-      double bd = beta[P] - b;
-      doUpdateCD(grads, xx[P], bd, P,P+1);
-      bdiffPos = bd > bdiffPos?bd:bdiffPos;
-      bdiffNeg = bd < bdiffNeg?bd:bdiffNeg;
-      beta[P] = b;
+      if(_parms._intercept) {
+        double b = bc.applyBounds(grads[P] * wsumInv,P);
+        double bd = beta[P] - b;
+        doUpdateCD(grads, xx[P], bd, P, P + 1);
+        bdiffPos = bd > bdiffPos ? bd : bdiffPos;
+        bdiffNeg = bd < bdiffNeg ? bd : bdiffNeg;
+        beta[P] = b;
+      }
       if (-1e-4 < bdiffNeg && bdiffPos < 1e-4)
         break;
     }
@@ -1584,7 +1587,7 @@ public class GLM extends ModelBuilder<GLMModel,GLMParameters,GLMOutput> {
   }
 
 
-  public class BetaConstraint extends Iced {
+  public final class BetaConstraint extends Iced {
     double[] _betaStart;
     double[] _betaGiven;
     double[] _rho;
@@ -1605,6 +1608,14 @@ public class GLM extends ModelBuilder<GLMModel,GLMParameters,GLMOutput> {
         _betaUB = MemoryManager.malloc8d(_dinfo.fullN() + 1);
         Arrays.fill(_betaUB, Double.POSITIVE_INFINITY);
       }
+    }
+
+    public double applyBounds(double d, int i) {
+      if(_betaLB != null && d < _betaLB[i])
+        return _betaLB[i];
+      if(_betaUB != null && d > _betaUB[i])
+        return _betaUB[i];
+      return d;
     }
 
     public BetaConstraint(Frame beta_constraints) {
