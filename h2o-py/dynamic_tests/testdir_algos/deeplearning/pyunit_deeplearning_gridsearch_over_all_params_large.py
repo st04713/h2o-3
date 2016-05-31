@@ -44,7 +44,7 @@ class Test_deeplearning_grid_search:
     """
 
     # parameters set by users, change with care
-    max_grid_model = 10000          # maximum number of grid models generated before adding max_runtime_secs
+    max_grid_model = 100          # maximum number of grid models generated before adding max_runtime_secs
 
     curr_time = str(round(time.time()))     # store current timestamp, used as part of filenames.
     seed = round(time.time())
@@ -63,15 +63,15 @@ class Test_deeplearning_grid_search:
 
     # following parameters are used to generate hyper-parameters
     max_int_val = 10            # maximum size of random integer values
-    min_int_val = -5           # minimum size of random integer values
+    min_int_val = -2           # minimum size of random integer values
     max_int_number = 3          # maximum number of integer random grid values to generate
 
     max_real_val = 1            # maximum size of random float values
-    min_real_val = -0.5           # minimum size of random float values
+    min_real_val = -0.1           # minimum size of random float values
     max_real_number = 3         # maximum number of real grid values to generate
 
     time_scale = 2              # maximum runtime scale
-    extra_time_fraction = 0.0   # since timing is never perfect, give some extra time on top of maximum runtime limit
+    extra_time_fraction = 0.1   # since timing is never perfect, give some extra time on top of maximum runtime limit
     min_runtime_per_iteration = 0    # minimum run time found.  Determined later
     model_run_time = 0.0        # time taken to run a vanilla deeplearning model.  Determined later.
     allowed_runtime_diff = 0.05     # run time difference between deeplearning manually built and gridsearch models
@@ -116,17 +116,11 @@ class Test_deeplearning_grid_search:
                                'stopping_rounds', 'stopping_tolerance' , 'stopping_metric', 'target_ratio_comm_to_comp',
                                'stopping_metric', 'max_hit_ratio_k', 'balance_classes']
 
-    params_zero_one = []
-    params_more_than_zero = []
-    params_more_than_one = []
-    params_zero_positive = ['max_runtime_secs', 'stopping_rounds', 'stopping_tolerance']       # >= 0
-
     final_hyper_params = dict()     # store the final hyper-parameters that we are going to use
     gridable_parameters = []    # store griddable parameter names
     gridable_types = []         # store the corresponding griddable parameter types
     gridable_defaults = []      # store the gridabble parameter default values
 
-    possible_number_models = 0      # possible number of models built based on hyper-parameter specification
     nfolds = 5                      # enable cross validation to test fold_assignment
 
     def __init__(self):
@@ -225,8 +219,8 @@ class Test_deeplearning_grid_search:
 
         # generate a new final_hyper_params which only takes a subset of all griddable parameters
         [self.possible_number_models, self.final_hyper_params] = \
-            pyunit_utils.check_and_count_models(self.hyper_params, self.params_zero_one, self.params_more_than_zero,
-                                                self.params_more_than_one, self.params_zero_positive,
+            pyunit_utils.check_and_count_models(self.hyper_params, [], [],
+                                                [], [],
                                                 self.max_grid_model)
 
         # must add max_runtime_secs to restrict unit test run time and as a promise to Arno to test for this
@@ -296,17 +290,17 @@ class Test_deeplearning_grid_search:
                 else:
                     max_runtime = 0
 
-                if "r2_stopping" in params_list:
-                    model_params["r2_stopping"] = params_list["r2_stopping"]
-                    del params_list["r2_stopping"]
+                if "elastic_averaging_moving_rate" in params_list:
+                    model_params["elastic_averaging_moving_rate"] = params_list["elastic_averaging_moving_rate"]
+                    del params_list["elastic_averaging_moving_rate"]
 
                 if "validation_frame" in params_list:
                     model_params["validation_frame"] = params_list["validation_frame"]
                     del params_list["validation_frame"]
 
-                if "learn_rate_annealing" in params_list:
-                    model_params["learn_rate_annealing"] = params_list["learn_rate_annealing"]
-                    del params_list["learn_rate_annealing"]
+                if "elastic_averaging_regularization" in params_list:
+                    model_params["elastic_averaging_regularization"] = params_list["elastic_averaging_regularization"]
+                    del params_list["elastic_averaging_regularization"]
 
                 manual_model = H2ODeepLearningEstimator(**params_list)
                 manual_model.train(x=self.x_indices, y=self.y_index, training_frame=self.training1_data,
@@ -316,12 +310,12 @@ class Test_deeplearning_grid_search:
                 model_runtime = pyunit_utils.find_grid_runtime([manual_model])  # time taken to build this model
                 manual_run_runtime += model_runtime
 
-                summary_list = manual_model._model_json['output']['model_summary']
-                tree_num = summary_list.cell_values[0][summary_list.col_header.index('number_of_trees')]
+                summary_list = manual_model._model_json["output"]["scoring_history"]
+                num_iterations = summary_list.cell_values[2][summary_list.col_header.index('iterations')]
 
                 if max_runtime > 0:
                     # shortest possible time it takes to build this model
-                    if (max_runtime < self.min_runtime_per_iteration) or (tree_num <= 1):
+                    if (max_runtime < self.min_runtime_per_iteration) or (num_iterations <= 1):
                         total_run_time_limits += model_runtime
                     else:
                         total_run_time_limits += max_runtime
@@ -353,7 +347,7 @@ class Test_deeplearning_grid_search:
             if self.test_failed == 0:
                 print("test_deeplearning_grid_search_over_params for deeplearning has passed!")
         except:
-            if self.possible_number_models > 0:
+            if len(grid_model) > 0:
                 print("test_deeplearning_grid_search_over_params for deeplearning failed: exception was thrown for "
                       "no reason.")
                 self.test_failed += 1
