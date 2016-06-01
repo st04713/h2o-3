@@ -39,7 +39,7 @@ class Test_kmeans_grid_search:
     """
 
     # parameters set by users, change with care
-    max_grid_model = 500           # maximum number of grid models generated before adding max_runtime_secs
+    max_grid_model = 100           # maximum number of grid models generated before adding max_runtime_secs
 
     curr_time = str(round(time.time()))     # store current timestamp, used as part of filenames.
     seed = round(time.time())
@@ -55,12 +55,12 @@ class Test_kmeans_grid_search:
 
     # following parameters are used to generate hyper-parameters
     max_int_val = 10            # maximum size of random integer values
-    min_int_val = -10           # minimum size of random integer values
-    max_int_number = 5          # maximum number of integer random grid values to generate
+    min_int_val = -2           # minimum size of random integer values
+    max_int_number = 3          # maximum number of integer random grid values to generate
 
     max_real_val = 1            # maximum size of random float values
-    min_real_val = -1           # minimum size of random float values
-    max_real_number = 5         # maximum number of real grid values to generate
+    min_real_val = -0.1           # minimum size of random float values
+    max_real_number = 3         # maximum number of real grid values to generate
 
     time_scale = 2              # maximum runtime scale
     max_iter_scale = 10         # scale the maximum number of iterations to be 100 maximum
@@ -245,6 +245,7 @@ class Test_kmeans_grid_search:
                     params_list.update(params_dict)
 
                     model_params = dict()
+                    num_iter = 0
 
                     # need to taken out max_runtime_secs from model parameters, it is now set in .train()
                     if "max_runtime_secs" in params_list:
@@ -266,30 +267,33 @@ class Test_kmeans_grid_search:
                     manual_run_runtime += model_runtime
 
                     summary_list = manual_model._model_json['output']['model_summary']
-                    num_iter = summary_list.cell_values[0][summary_list.col_header.index('number_of_iterations')]
+                    if not(summary_list == None):
+                        num_iter = summary_list.cell_values[0][summary_list.col_header.index('number_of_iterations')]
+
+                        # compute and compare test metrics between the two models
+                        if not(manual_model._model_json["output"]["model_summary"] == None):
+                            grid_model_metrics = \
+each_model._model_json["output"]["model_summary"].cell_values[0][summary_list.col_header.index('total_sum_of_squares')]
+                            manual_model_metrics = \
+manual_model._model_json["output"]["model_summary"].cell_values[0][summary_list.col_header.index('total_sum_of_squares')]
+
+                        # just compare the training metrics in this case within tolerance:
+                            if not((type(grid_model_metrics) == str) or (type(manual_model_metrics) == str)):
+                                if (each_model_runtime > 0) and \
+                                        (abs(grid_model_metrics - manual_model_metrics)/grid_model_metrics >
+                                             self.allowed_diff):
+                                    print("test_kmeans_grid_search_over_params for kmeans warning: grid search model "
+                                          "metric ({0}) and manually built H2O model metric ({1}) differ too much"
+                                          "!".format(grid_model_metrics, manual_model_metrics))
 
                     if max_runtime > 0:
-                        # collect allowed max_runtime_secs info
+                                # collect allowed max_runtime_secs info
                         if (max_runtime < self.min_runtime_per_iter) or (num_iter <= 1):
                             total_run_time_limits += model_runtime
                         else:
                             total_run_time_limits += max_runtime
 
                     true_run_time_limits += max_runtime
-
-                    # compute and compare test metrics between the two models
-                    grid_model_metrics = \
-each_model._model_json["output"]["model_summary"].cell_values[0][summary_list.col_header.index('total_sum_of_squares')]
-                    manual_model_metrics = \
-manual_model._model_json["output"]["model_summary"].cell_values[0][summary_list.col_header.index('total_sum_of_squares')]
-
-                    # just compare the training metrics in this case within tolerance:
-                    if not((type(grid_model_metrics) == str) or (type(manual_model_metrics) == str)):
-                        if (each_model_runtime > 0) and \
-                                (abs(grid_model_metrics - manual_model_metrics)/grid_model_metrics > self.allowed_diff):
-                            print("test_kmeans_grid_search_over_params for kmeans warning: grid search model metric "
-                                  "({0}) and manually built H2O model metric ({1}) differ too much"
-                                  "!".format(grid_model_metrics, manual_model_metrics))
 
                 total_run_time_limits = max(total_run_time_limits, true_run_time_limits) * (1+self.extra_time_fraction)
 
