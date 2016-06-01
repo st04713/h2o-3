@@ -339,7 +339,8 @@ class Test_naivebayes_grid_search:
 
                     # just compare the mse in this case within tolerance:
                     if not((type(grid_model_metrics) == str) or (type(manual_model_metrics) == str)):
-                        if abs(grid_model_metrics - manual_model_metrics) > self.allowed_diff:
+                        if (abs(grid_model_metrics) > 0) \
+                            and (abs(grid_model_metrics - manual_model_metrics)/grid_model_metrics > self.allowed_diff):
                             print("test_naivebayes_grid_search_over_params for naivebayes WARNING\ngrid search model "
                                   "{0}: {1}, time taken to build (secs): {2}\n and manually built H2O model {3}: {4}, "
                                   "time taken to build (secs): {5}\ndiffer too much!"
@@ -355,14 +356,16 @@ class Test_naivebayes_grid_search:
                 # make sure the max_runtime_secs is working to restrict model built time
                 if not(manual_run_runtime <= total_run_time_limits):
                     self.test_failed += 1
-                    print("test_naivebayes_grid_search_over_params for naivebayes failed: time taken to manually build models is {0}."
-                          "  Maximum allowed time is {1}".format(manual_run_runtime, total_run_time_limits))
+                    print("test_naivebayes_grid_search_over_params for naivebayes failed: time taken to manually build "
+                          "models is {0}.  Maximum allowed time "
+                          "is {1}".format(manual_run_runtime, total_run_time_limits))
 
                 if self.test_failed == 0:
                     print("test_naivebayes_grid_search_over_params for naivebayes has passed!")
         except:
             if self.possible_number_models > 0:
-                print("test_naivebayes_grid_search_over_params for naivebayes failed: exception was thrown for no reason.")
+                print("test_naivebayes_grid_search_over_params for naivebayes failed: exception was thrown for "
+                      "no reason.")
                 self.test_failed += 1
 
 

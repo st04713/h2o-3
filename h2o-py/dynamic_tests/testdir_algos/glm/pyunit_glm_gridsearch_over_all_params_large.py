@@ -397,8 +397,8 @@ class Test_glm_grid_search:
 
                 # just compare the mse in this case within tolerance:
                     if not((type(grid_model_metrics.mse()) == str) or (type(manual_model_metrics.mse()) == str)):
-                        if abs(grid_model_metrics.mse() - manual_model_metrics.mse())/grid_model_metrics.mse()\
-                                > self.allowed_diff:
+                        if (abs(grid_model_metrics.mse()) > 0) \
+            and abs(grid_model_metrics.mse() - manual_model_metrics.mse())/grid_model_metrics.mse() > self.allowed_diff:
                             print("test1_glm_grid_search_over_params for GLM warning: grid search model metric ({0}) "
                                   "and manually built H2O model metric ({1}) differ too much"
                                   "!".format(grid_model_metrics.mse(), manual_model_metrics.mse()))
@@ -454,8 +454,8 @@ class Test_glm_grid_search:
         error_number = np.random.random_integers(0, 3, 1)   # randomly choose an error
 
         error_hyper_params = \
-            pyunit_utils.insert_error_grid_search(self.final_hyper_params, self.gridable_parameters, self.gridable_types,
-                                                  error_number[0])
+            pyunit_utils.insert_error_grid_search(self.final_hyper_params, self.gridable_parameters,
+                                                  self.gridable_types, error_number[0])
 
         print("test2_illegal_name_value: the bad hyper-parameters are: ")
         print(error_hyper_params)

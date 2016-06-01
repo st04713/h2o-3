@@ -328,7 +328,8 @@ class Test_deeplearning_grid_search:
 
                 # just compare the mse in this case within tolerance:
                 if not((type(grid_model_metrics) == str) or (type(manual_model_metrics) == str)):
-                    if abs(grid_model_metrics - manual_model_metrics)/grid_model_metrics > self.allowed_diff:
+                    if (abs(grid_model_metrics) > 0) \
+                            and abs(grid_model_metrics - manual_model_metrics)/grid_model_metrics > self.allowed_diff:
                         print("test_deeplearning_grid_search_over_params for deeplearning warning: grid search "
                               "model metric ({0}) and manually built H2O model metric ({1}) differ too much"
                               "!".format(grid_model_metrics, manual_model_metrics))

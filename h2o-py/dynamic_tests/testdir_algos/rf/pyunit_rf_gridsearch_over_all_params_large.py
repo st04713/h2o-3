@@ -301,7 +301,7 @@ class Test_rf_grid_search:
 
                     # just compare the mse in this case within tolerance:
                     if not((type(grid_model_metrics) == str) or (type(manual_model_metrics) == str)):
-                        if (each_model_runtime > 0) and \
+                        if (abs(grid_model_metrics) > 0) and \
                                 (abs(grid_model_metrics - manual_model_metrics)/grid_model_metrics > self.allowed_diff):
                             print("test_rf_gridsearch_sorting_metrics for random forest warning: grid search model "
                                   "metric ({0}) and manually built H2O model metric ({1}) differ too "
@@ -312,14 +312,16 @@ class Test_rf_grid_search:
                 # make sure the max_runtime_secs is working to restrict model built time
                 if not(manual_run_runtime <= total_run_time_limits):
                     self.test_failed += 1
-                    print("test_rf_gridsearch_sorting_metrics for random forest failed: time taken to manually build models is {0}."
-                          "  Maximum allowed time is {1}".format(manual_run_runtime, total_run_time_limits))
+                    print("test_rf_gridsearch_sorting_metrics for random forest failed: time taken to manually build"
+                          " models is {0}.  Maximum allowed time is"
+                          " {1}".format(manual_run_runtime, total_run_time_limits))
 
                 if self.test_failed == 0:
                     print("test_rf_gridsearch_sorting_metrics for random forest has passed!")
         except:
             if self.possible_number_models > 0:
-                print("test_rf_gridsearch_sorting_metrics for random forest failed: exception was thrown for no reason.")
+                print("test_rf_gridsearch_sorting_metrics for random forest failed: exception was thrown for no"
+                      " reason.")
                 self.test_failed += 1
 
 

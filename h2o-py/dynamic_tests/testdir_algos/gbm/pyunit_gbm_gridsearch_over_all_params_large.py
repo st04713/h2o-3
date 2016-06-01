@@ -358,7 +358,7 @@ class Test_gbm_grid_search:
 
                     # just compare the mse in this case within tolerance:
                     if not((type(grid_model_metrics) == str) or (type(manual_model_metrics) == str)):
-                        if (each_model_runtime > 0) and \
+                        if (abs(grid_model_metrics) > 0) and \
                                 (abs(grid_model_metrics - manual_model_metrics)/grid_model_metrics > self.allowed_diff):
 
                             print("test_gbm_grid_search_over_params for GBM warning: grid search model mdetric ({0}) "
