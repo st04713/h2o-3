@@ -228,6 +228,8 @@ class Test_deeplearning_grid_search:
                 ("max_runtime_secs" in list(self.hyper_params)):
             self.final_hyper_params["max_runtime_secs"] = self.hyper_params["max_runtime_secs"]
 
+        self.final_hyper_params["seed"] = self.seed     # added see to make test more repeatable
+
         # write out the hyper-parameters used into json files.
         pyunit_utils.write_hyper_parameters_json(self.current_dir, self.sandbox_dir, self.json_filename,
                                                  self.final_hyper_params)

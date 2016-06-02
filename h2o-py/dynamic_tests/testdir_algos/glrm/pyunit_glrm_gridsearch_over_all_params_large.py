@@ -48,6 +48,7 @@ class Test_glrm_grid_search:
     max_grid_model = 100           # maximum number of grid models generated before adding max_runtime_secs
 
     curr_time = str(round(time.time()))     # store current timestamp, used as part of filenames.
+    seed = round(time.time())
 
     # parameters denoting filenames of interested that store training/validation/test data sets in csv format
     training1_filenames = "smalldata/gridsearch/glrmdata1000x25.csv"
@@ -210,6 +211,8 @@ class Test_glrm_grid_search:
             self.final_hyper_params["k"] = self.hyper_params["k"]
             len_good_k = len([x for x in self.final_hyper_params["k"] if (x >= 1)])
             self.possible_number_models = self.possible_number_models*len_good_k
+
+        self.final_hyper_params["seed"] = self.seed     # added see to make test more repeatable
 
         # write out the hyper-parameters used into json files.
         pyunit_utils.write_hyper_parameters_json(self.current_dir, self.sandbox_dir, self.json_filename,

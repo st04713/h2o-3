@@ -1,7 +1,6 @@
 from __future__ import print_function
 
 import sys
-import random
 import os
 from builtins import range
 import time
@@ -58,6 +57,7 @@ class Test_kmeans_grid_search:
     hyper_params["max_iterations"] = [50]
     hyper_params["k"] = [8]
     hyper_params["validation_frame"] = []
+    hyper_params["seed"] = seed     # added see to make test more repeatable
 
 
     def __init__(self):

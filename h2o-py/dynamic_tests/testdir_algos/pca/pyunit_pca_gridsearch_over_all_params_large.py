@@ -186,6 +186,8 @@ class Test_PCA_grid_search:
             len_good_k = len([x for x in self.hyper_params["k"] if (x > 0)])
             self.possible_number_models = self.possible_number_models*len_good_k
 
+        self.final_hyper_params["seed"] = self.seed     # added see to make test more repeatable
+
         # write out the hyper-parameters used into json files.
         pyunit_utils.write_hyper_parameters_json(self.current_dir, self.sandbox_dir, self.json_filename,
                                                  self.final_hyper_params)
