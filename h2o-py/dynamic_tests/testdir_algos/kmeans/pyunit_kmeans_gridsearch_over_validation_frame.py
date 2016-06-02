@@ -27,8 +27,6 @@ class Test_kmeans_grid_search:
     """
 
     # parameters set by users, change with care
-    max_grid_model = 100           # maximum number of grid models generated before adding max_runtime_secs
-
     curr_time = str(round(time.time()))     # store current timestamp, used as part of filenames.
     seed = round(time.time())
 
@@ -57,7 +55,7 @@ class Test_kmeans_grid_search:
     hyper_params["max_iterations"] = [50]
     hyper_params["k"] = [8]
     hyper_params["validation_frame"] = []
-    hyper_params["seed"] = seed     # added see to make test more repeatable
+    hyper_params["seed"] = [seed]     # added see to make test more repeatable
 
 
     def __init__(self):
@@ -98,7 +96,7 @@ class Test_kmeans_grid_search:
 #        self.hyper_params["validation_frame"] = ["valid0", "valid1", "valid2"]
 #        self.hyper_params["validation_frame"] = [valid0.frame_id, valid1.frame_id, valid2.frame_id]
 #        self.hyper_params["validation_frame"] = [valid0]  # does not work, result in validation frame being null
-        self.hyper_params["validation_frame"] = [valid0.frame_id]
+        self.hyper_params["validation_frame"] = [valid0.frame_id, valid1.frame_id]   # id seems better, not result null stuff
 
         print("*******************************************************************************************")
         print("test_kmeans_grid_search_over_validation_datasets for kmeans ")
