@@ -63,8 +63,8 @@ class Test_PUBDEV_2980_kmeans:
         h2o.cluster_info()
 
 
-        good_params_list = {'init': 'Furthest', 'seed': 1464887902, 'max_iterations': 10, 'k': 10}
-        good_model_params = {'max_runtime_secs': 0.04326415543999999}
+        good_params_list = {'max_iterations': 20, 'k': 6, 'init': 'Furthest', 'seed': 1464891169}
+        good_model_params = {'max_runtime_secs': 0.014673351}
         good_model = H2OKMeansEstimator(**good_params_list)
         good_model.train(x=self.x_indices, training_frame=self.training1_data,
                            **good_model_params)
