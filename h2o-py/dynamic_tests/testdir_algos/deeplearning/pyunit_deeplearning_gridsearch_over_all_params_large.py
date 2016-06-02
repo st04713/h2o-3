@@ -234,7 +234,7 @@ class Test_deeplearning_grid_search:
 
     def test_deeplearning_grid_search_over_params(self):
         """
-        test_deeplearning_grid_search_over_params performs the following:
+        test_deeplearning_fieldnames performs the following:
         a. build H2O deeplearning models using grid search.  Count and make sure models
            are only built for hyper-parameters set to legal values.  No model is built for bad hyper-parameters
            values.  We should instead get a warning/error message printed out.
@@ -247,7 +247,7 @@ class Test_deeplearning_grid_search:
         """
 
         print("*******************************************************************************************")
-        print("test_deeplearning_grid_search_over_params for deeplearning " + self.family)
+        print("test_deeplearning_fieldnames for deeplearning " + self.family)
         h2o.cluster_info()
 
         # start grid search
@@ -311,7 +311,10 @@ class Test_deeplearning_grid_search:
                 manual_run_runtime += model_runtime
 
                 summary_list = manual_model._model_json["output"]["scoring_history"]
-                num_iterations = summary_list.cell_values[2][summary_list.col_header.index('iterations')]
+                if len(summary_list.cell_values) < 3:
+                    num_iterations = 1
+                else:
+                    num_iterations = summary_list.cell_values[2][summary_list.col_header.index('iterations')]
 
                 if max_runtime > 0:
                     # shortest possible time it takes to build this model
@@ -330,7 +333,7 @@ class Test_deeplearning_grid_search:
                 if not((type(grid_model_metrics) == str) or (type(manual_model_metrics) == str)):
                     if (abs(grid_model_metrics) > 0) \
                             and abs(grid_model_metrics - manual_model_metrics)/grid_model_metrics > self.allowed_diff:
-                        print("test_deeplearning_grid_search_over_params for deeplearning warning: grid search "
+                        print("test_deeplearning_fieldnames for deeplearning warning: grid search "
                               "model metric ({0}) and manually built H2O model metric ({1}) differ too much"
                               "!".format(grid_model_metrics, manual_model_metrics))
 
@@ -339,17 +342,17 @@ class Test_deeplearning_grid_search:
             # make sure the max_runtime_secs is working to restrict model built time
             if not(manual_run_runtime <= total_run_time_limits):
                 self.test_failed += 1
-                print("test_deeplearning_grid_search_over_params for deeplearning failed: time taken to manually build"
+                print("test_deeplearning_fieldnames for deeplearning failed: time taken to manually build"
                       " models is {0}.  Maximum allowed time is {1}".format(manual_run_runtime, total_run_time_limits))
             else:
                 print("time taken to manually build all models is {0}. Maximum allowed time is "
                       "{1}".format(manual_run_runtime, total_run_time_limits))
 
             if self.test_failed == 0:
-                print("test_deeplearning_grid_search_over_params for deeplearning has passed!")
+                print("test_deeplearning_fieldnames for deeplearning has passed!")
         except:
             if len(grid_model) > 0:
-                print("test_deeplearning_grid_search_over_params for deeplearning failed: exception was thrown for "
+                print("test_deeplearning_fieldnames for deeplearning failed: exception was thrown for "
                       "no reason.")
                 self.test_failed += 1
 
