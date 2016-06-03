@@ -1,11 +1,13 @@
 package hex.grid;
 
-import hex.*;
+import hex.Model;
+import hex.ModelBuilder;
+import hex.ModelParametersBuilderFactory;
+import hex.ScoringInfo;
 import hex.grid.HyperSpaceWalker.BaseWalker;
 import water.*;
 import water.exceptions.H2OIllegalArgumentException;
 import water.fvec.Frame;
-import water.util.AtomicUtils;
 import water.util.Log;
 import water.util.PojoUtils;
 
