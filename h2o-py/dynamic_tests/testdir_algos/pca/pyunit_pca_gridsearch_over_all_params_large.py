@@ -213,7 +213,7 @@ class Test_PCA_grid_search:
             print("Hyper-parameters used here is {0}".format(self.final_hyper_params))
 
             # start grid search
-            grid_model = H2OGridSearch(H2OPCA(seed=self.seed, pca_method=self.pca_method),
+            grid_model = H2OGridSearch(H2OPCA(pca_method=self.pca_method),
                                        hyper_params=self.final_hyper_params)
             grid_model.train(x=self.x_indices, training_frame=self.training1_data)
 
@@ -228,7 +228,6 @@ class Test_PCA_grid_search:
                 # add parameters into params_dict.  Use this to manually build model
                 params_dict = dict()
                 params_dict["pca_method"] = self.pca_method
-                params_dict["seed"] = self.seed
                 total_run_time_limits = 0.0   # calculate upper bound of max_runtime_secs
                 true_run_time_limits = 0.0
                 manual_run_runtime = 0.0

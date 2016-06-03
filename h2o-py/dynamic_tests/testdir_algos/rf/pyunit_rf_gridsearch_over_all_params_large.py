@@ -232,8 +232,7 @@ class Test_rf_grid_search:
             print("Hyper-parameters used here is {0}".format(self.final_hyper_params))
 
             # start grid search
-            grid_model = H2OGridSearch(H2ORandomForestEstimator(nfolds=self.nfolds, seed=self.seed,
-                                                                score_tree_interval=0),
+            grid_model = H2OGridSearch(H2ORandomForestEstimator(nfolds=self.nfolds, score_tree_interval=0),
                                        hyper_params=self.final_hyper_params)
             grid_model.train(x=self.x_indices, y=self.y_index, training_frame=self.training1_data)
 
@@ -248,7 +247,6 @@ class Test_rf_grid_search:
                 # add parameters into params_dict.  Use this to manually build model
                 params_dict = dict()
                 params_dict["nfolds"] = self.nfolds
-                params_dict["seed"] = self.seed
                 params_dict["score_tree_interval"] = 0
                 total_run_time_limits = 0.0   # calculate upper bound of max_runtime_secs
                 true_run_time_limits = 0.0

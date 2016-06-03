@@ -278,6 +278,9 @@ public interface HyperSpaceWalker<MP extends Model.Parameters, C extends HyperSp
           paramsBuilder = _paramsBuilderFactory.get(params);
       for (int i = 0; i < _hyperParamNames.length; i++) {
         String paramName = _hyperParamNames[i];
+
+        // if paramName is valid, need to load in the actual validation frame here.
+
         Object paramValue = hyperParams[i];
         paramsBuilder.set(paramName, paramValue);
       }
