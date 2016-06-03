@@ -80,8 +80,7 @@ public class GridSearchHandler<G extends Grid<MP>,
 
     // Need to change validation_frame to valid now.  HyperSpacewalker will complain
     // if it encountered an illegal parameter name.  From now on, validation_frame,
-    // training_fame are no longer valid names.  Do you fill in the frames yet, do it
-    // in HyperSpaceWalker.java, it will throw an exception for bad values there.
+    // training_fame are no longer valid names.
     if (sortedMap.containsKey("validation_frame")) {
       sortedMap.put("valid", sortedMap.get("validation_frame"));
       sortedMap.remove("validation_frame");

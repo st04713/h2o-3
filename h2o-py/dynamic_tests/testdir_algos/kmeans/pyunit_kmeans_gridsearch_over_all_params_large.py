@@ -272,7 +272,7 @@ class Test_kmeans_grid_search:
                         num_iter = summary_list.cell_values[0][summary_list.col_header.index('number_of_iterations')]
 
                         # compute and compare test metrics between the two models
-                        if not(manual_model._model_json["output"]["model_summary"] == None):
+                        if not(each_model._model_json["output"]["model_summary"] == None):
                             grid_model_metrics = \
 each_model._model_json["output"]["model_summary"].cell_values[0][summary_list.col_header.index('total_sum_of_squares')]
                             manual_model_metrics = \
