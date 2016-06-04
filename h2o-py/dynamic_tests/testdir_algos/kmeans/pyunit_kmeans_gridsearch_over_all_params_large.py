@@ -221,8 +221,7 @@ class Test_kmeans_grid_search:
             print("Hyper-parameters used here is {0}".format(self.final_hyper_params))
 
             # start grid search
-            grid_model = H2OGridSearch(H2OKMeansEstimator(),
-                                       hyper_params=self.final_hyper_params)
+            grid_model = H2OGridSearch(H2OKMeansEstimator(), hyper_params=self.final_hyper_params)
             grid_model.train(x=self.x_indices, training_frame=self.training1_data)
 
             self.correct_model_number = len(grid_model)     # store number of models built
