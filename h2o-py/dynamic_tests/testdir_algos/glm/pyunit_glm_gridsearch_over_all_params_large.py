@@ -293,9 +293,6 @@ class Test_glm_grid_search:
             self.true_correct_model_number = self.true_correct_model_number * \
                                              len(self.final_hyper_params["max_runtime_secs"])
 
-        self.final_hyper_params_bad["seed"] = [self.seed]     # added see to make test more repeatable
-        self.final_hyper_params["seed"] = [self.seed]     # added see to make test more repeatable
-
         # write out the hyper-parameters used into json files.
         pyunit_utils.write_hyper_parameters_json(self.current_dir, self.sandbox_dir, self.json_filename_bad,
                                                  self.final_hyper_params_bad)
