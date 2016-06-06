@@ -81,21 +81,21 @@ class Test_kmeans_grid_search:
 
         print("Hyper-parameters used here is {0}".format(self.hyper_params))
 
-        try:
+#        try:
             # start grid search
-            grid_model = H2OGridSearch(H2OKMeansEstimator(), hyper_params=self.hyper_params)
-            grid_model.train(x=self.x_indices, training_frame=self.training1_data)
+        grid_model = H2OGridSearch(H2OKMeansEstimator(), hyper_params=self.hyper_params)
+        grid_model.train(x=self.x_indices, training_frame=self.training1_data)
 
-            for each_model in grid_model:
-                summary_list = each_model._model_json["output"]["validation_metrics"]
-                if (summary_list is not None) and (summary_list._metric_json is not None):
-                    grid_model_metrics = summary_list._metric_json['totss']
-                    print("total sum of squares of a model is: {0}".format(grid_model_metrics))
-                else:
-                    print('model._model_json["output"]["validation_metrics"] of a model is None for some reason....')
-        except:
-            print("test_grid_search_for_kmeans_over_validation_frame failed: exception was thrown for no reason.")
-            self.test_failed += 1
+        for each_model in grid_model:
+            summary_list = each_model._model_json["output"]["validation_metrics"]
+            if (summary_list is not None) and (summary_list._metric_json is not None):
+                grid_model_metrics = summary_list._metric_json['totss']
+                print("total sum of squares of a model is: {0}".format(grid_model_metrics))
+            else:
+                print('model._model_json["output"]["validation_metrics"] of a model is None for some reason....')
+        # except:
+        #     print("test_grid_search_for_kmeans_over_validation_frame failed: exception was thrown for no reason.")
+        #     self.test_failed += 1
 
 
 def test_grid_search_for_kmeans_over_validation_frame():
