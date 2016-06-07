@@ -236,7 +236,7 @@ class Test_glrm_grid_search:
         print("test_glrm_grid_search_over_params for GLRM ")
         h2o.cluster_info()
 
-        try:
+        if self.possible_number_models > 0:
             print("Hyper-parameters used here is {0}".format(self.final_hyper_params))
 
             # start grid search
@@ -253,7 +253,7 @@ class Test_glrm_grid_search:
             else:
                 # add parameters into params_dict.  Use this to manually build model
                 params_dict = dict()
-#                params_dict["nfolds"] = self.nfolds
+    #                params_dict["nfolds"] = self.nfolds
                 total_run_time_limits = 0.0   # calculate upper bound of max_runtime_secs
                 true_run_time_limits = 0.0
                 manual_run_runtime = 0.0
@@ -319,10 +319,6 @@ class Test_glrm_grid_search:
 
                 if self.test_failed == 0:
                     print("test_glrm_grid_search_over_params for GLRM has passed!")
-        except:
-            if self.possible_number_models > 0:
-                print("test_glrm_grid_search_over_params for GLRM failed: exception was thrown for no reason.")
-                self.test_failed += 1
 
 
 def test_grid_search_for_glrm_over_all_params():
