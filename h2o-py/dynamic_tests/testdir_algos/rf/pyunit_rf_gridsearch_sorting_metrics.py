@@ -55,11 +55,11 @@ class Test_rf_gridsearch_sorting_metrics:
 
     # following parameters are used to generate hyper-parameters
     max_int_val = 10            # maximum size of random integer values
-    min_int_val = -2           # minimum size of random integer values
+    min_int_val = 0           # minimum size of random integer values
     max_int_number = 2          # maximum number of integer random grid values to generate
 
     max_real_val = 1            # maximum size of random float values
-    min_real_val = -0.1           # minimum size of random float values
+    min_real_val = 0           # minimum size of random float values
     max_real_number = 2         # maximum number of real grid values to generate
 
     time_scale = 2              # maximum runtime scale
