@@ -229,7 +229,7 @@ class Test_rf_gridsearch_sorting_metrics:
 
         # grab performance metric for each model of grid_model and collect correct sorting metrics by hand
         for each_model in grid_model:
-            grid_model_metric = result_table.cell_values[model_index][stopping_metric_index]
+            grid_model_metric = float(result_table.cell_values[model_index][stopping_metric_index])
             grid_model_metrics.append(grid_model_metric)
 
             manual_metric = each_model._model_json["output"]["cross_validation_metrics"]._metric_json["logloss"]
