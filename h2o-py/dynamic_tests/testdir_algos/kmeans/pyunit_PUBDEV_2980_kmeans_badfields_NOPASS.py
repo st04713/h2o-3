@@ -75,11 +75,17 @@ class Test_PUBDEV_2980_kmeans:
         bad_model.train(x=self.x_indices, training_frame=self.training1_data,
                                        **bad_model_params)
 
+        good_model_type = type(good_model._model_json['output']['model_summary'])
+        bad_model_type = type(bad_model._model_json['output']['model_summary'])
         print("good_model._model_json['output']['model_summary'] type is {0}.  "
               "bad_model._model_json['output']['model_summary'] type is "
-              "{1}".format(type(good_model._model_json['output']['model_summary']),
-                           type(bad_model._model_json['output']['model_summary'])))
-        print("They are not equal for some reason....")
+              "{1}".format(good_model_type, bad_model_type))
+
+        if not(good_model_type == bad_model_type):
+            print("They are not equal for some reason....")
+            self.test_failed = 1
+        else:
+            print("The fields are of the same type.")
 
 
 def test_PUBDEV_2980_for_kmeans():
