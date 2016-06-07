@@ -210,50 +210,46 @@ class Test_rf_gridsearch_sorting_metrics:
         print("test_rf_gridsearch_sorting_metrics for random forest ")
         h2o.cluster_info()
 
-        try:
-            print("Hyper-parameters used here is {0}".format(self.final_hyper_params))
 
-            # start grid search
-            grid_model = H2OGridSearch(H2ORandomForestEstimator(nfolds=self.nfolds, seed=self.seed,
-                                                                score_tree_interval=0),
-                                       hyper_params=self.final_hyper_params)
-            grid_model.train(x=self.x_indices, y=self.y_index, training_frame=self.training1_data)
+        print("Hyper-parameters used here is {0}".format(self.final_hyper_params))
 
-            result_table = grid_model._grid_json["summary_table"]
-            stopping_metric_index = result_table.col_header.index(self.training_metric)
-            model_index = 0
-            grid_model_metrics = []
+        # start grid search
+        grid_model = H2OGridSearch(H2ORandomForestEstimator(nfolds=self.nfolds, seed=self.seed,
+                                                            score_tree_interval=0),
+                                   hyper_params=self.final_hyper_params)
+        grid_model.train(x=self.x_indices, y=self.y_index, training_frame=self.training1_data)
 
-            diff = 0    # calculate difference between gridsearch model metrics and manually extracted model.
-            diff_train = 0  # calculate difference between training and cross-validation metrics
+        result_table = grid_model._grid_json["summary_table"]
+        stopping_metric_index = result_table.col_header.index(self.training_metric)
+        model_index = 0
+        grid_model_metrics = []
 
-            # grab performance metric for each model of grid_model and collect correct sorting metrics by hand
-            for each_model in grid_model:
-                grid_model_metric = result_table.cell_values[model_index][stopping_metric_index]
-                grid_model_metrics.append(grid_model_metric)
+        diff = 0    # calculate difference between gridsearch model metrics and manually extracted model.
+        diff_train = 0  # calculate difference between training and cross-validation metrics
 
-                manual_metric = each_model._model_json["output"]["cross_validation_metrics"]._metric_json["logloss"]
-                diff += abs(grid_model_metric - manual_metric)
+        # grab performance metric for each model of grid_model and collect correct sorting metrics by hand
+        for each_model in grid_model:
+            grid_model_metric = result_table.cell_values[model_index][stopping_metric_index]
+            grid_model_metrics.append(grid_model_metric)
 
-                manual_training_metric = each_model._model_json["output"]["training_metrics"]._metric_json["logloss"]
-                diff_train += abs(grid_model_metric-manual_training_metric)
+            manual_metric = each_model._model_json["output"]["cross_validation_metrics"]._metric_json["logloss"]
+            diff += abs(grid_model_metric - manual_metric)
 
-                print("grid model logloss: {0}, grid model training logloss: "
-                      "{1}".format(grid_model_metric, manual_training_metric))
+            manual_training_metric = each_model._model_json["output"]["training_metrics"]._metric_json["logloss"]
+            diff_train += abs(grid_model_metric-manual_training_metric)
 
-                model_index += 1
+            print("grid model logloss: {0}, grid model training logloss: "
+                  "{1}".format(grid_model_metric, manual_training_metric))
 
-            if (diff > self.diff) or not(grid_model_metrics == sorted(grid_model_metrics)) or (diff_train < self.diff):
-                self.test_failed = 1
-                print("test_rf_gridsearch_sorting_metrics for random forest has failed!")
+            model_index += 1
 
-            if self.test_failed == 0:
-                print("test_rf_gridsearch_sorting_metrics for random forest has passed!")
-        except:
-            if self.possible_number_models > 0:
-                print("test_rf_gridsearch_sorting_metrics for random forest failed: exception was thrown for "
-                      "no reason.")
-                self.test_failed += 1
+        if (diff > self.diff) or not(grid_model_metrics == sorted(grid_model_metrics)) or (diff_train < self.diff):
+            self.test_failed = 1
+            print("test_rf_gridsearch_sorting_metrics for random forest has failed!")
+
+        if self.test_failed == 0:
+            print("test_rf_gridsearch_sorting_metrics for random forest has passed!")
+
 
 
 def test_gridsearch_sorting_metrics():
